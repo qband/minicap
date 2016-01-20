@@ -5,6 +5,7 @@ LOCAL_MODULE := minicap-common
 
 LOCAL_SRC_FILES := \
 	JpgEncoder.cpp \
+	Watermark.cpp \
 	SimpleServer.cpp \
 	minicap.cpp \
 

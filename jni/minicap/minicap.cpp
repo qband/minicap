@@ -20,6 +20,7 @@
 #include "JpgEncoder.hpp"
 #include "SimpleServer.hpp"
 #include "Projection.hpp"
+#include "Watermark.hpp"
 
 #define BANNER_VERSION 1
 #define BANNER_SIZE 24
@@ -337,6 +338,7 @@ main(int argc, char* argv[]) {
   // Leave a 4-byte padding to the encoder so that we can inject the size
   // to the same buffer.
   JpgEncoder encoder(4, 0);
+  Watermark watermark(4, 0);
   Minicap::Frame frame;
   bool haveFrame = false;
 
@@ -399,6 +401,12 @@ main(int argc, char* argv[]) {
 
     if (!encoder.encode(&frame, quality)) {
       MCERROR("Unable to encode frame");
+      goto disaster;
+    }
+
+    // Add watermark to frame
+    if (!watermark.add(&frame)) {
+      MCERROR("Unable to add watermark to frame");
       goto disaster;
     }
 
@@ -488,6 +496,12 @@ main(int argc, char* argv[]) {
       // Encode the frame.
       if (!encoder.encode(&frame, quality)) {
         MCERROR("Unable to encode frame");
+        goto disaster;
+      }
+
+      // Add watermark to frame
+      if (!watermark.add(&frame)) {
+        MCERROR("Unable to add watermark to frame");
         goto disaster;
       }
 
