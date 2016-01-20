@@ -1,6 +1,7 @@
+.idea/
+
 /.env
 /libs/
 /obj/
-/libs/
 /build/
 /temp/
