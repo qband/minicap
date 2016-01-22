@@ -9,6 +9,7 @@
 #include <iostream>
 #include <turbojpeg.h>
 #include "Minicap.hpp"
+#include <magick/api.h>
 
 class Watermark {
 public:
@@ -28,6 +29,9 @@ private:
   unsigned int mMaxHeight;
   unsigned char* mEncodedData;
   unsigned long mEncodedSize;
+
+  const char*
+  convertFormat(Minicap::Format format);
 };
 
 #endif //MINICAP_WATERMARK_HPP

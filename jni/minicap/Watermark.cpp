@@ -23,6 +23,47 @@ Watermark::~Watermark() {
 
 bool
 Watermark::add(Minicap::Frame* frame) {
-  std::cout << frame->width << " " << frame->height << " " << frame->stride << " " << frame->bpp << " " << frame->format << std::endl;
+  ExceptionInfo exception;
+  Image *image;
+  DrawInfo *draw_info;
+
+  image=ConstituteImage(
+    frame->width,
+    frame->height,
+    convertFormat(frame->format),
+    CharPixel,
+    frame->data,
+    &exception);
+  draw_info=AcquireDrawInfo();
+
+  AnnotateImage(image, draw_info);
+  //DestroyExceptionInfo(&exception);
+  DestroyDrawInfo(draw_info);
+  DestroyImage(image);
+
+  std::cout << frame->data
+            << " " << frame->format
+            << " " << frame->width
+            << " " << frame->height
+            << " " << frame->stride
+            << " " << frame->bpp
+            << " " << frame->size
+            << std::endl;
   return true;
+}
+
+const char*
+Watermark::convertFormat(Minicap::Format format) {
+  switch (format) {
+  case Minicap::FORMAT_RGBA_8888:
+    return "RGBA";
+  case Minicap::FORMAT_RGBX_8888:
+    return "RGBX";
+  case Minicap::FORMAT_RGB_888:
+    return "RGB";
+  case Minicap::FORMAT_BGRA_8888:
+    return "BGRA";
+  default:
+    throw std::runtime_error("Unsupported pixel format");
+  }
 }
