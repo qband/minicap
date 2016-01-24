@@ -23,9 +23,28 @@ Watermark::~Watermark() {
 
 bool
 Watermark::add(Minicap::Frame* frame) {
-  ExceptionInfo exception;
+  std::cout << "A"
+              << " " << frame->data
+              << " " << frame->format
+              << " " << frame->width
+              << " " << frame->height
+              << " " << frame->stride
+              << " " << frame->bpp
+              << " " << frame->size
+              << std::endl;
+
+  ExceptionInfo *exception;
   Image *image;
   DrawInfo *draw_info;
+  char label[]="test";
+  ImageInfo *image_info;
+  char geometry[MaxTextExtent];
+
+  exception=AcquireExceptionInfo();
+
+  image_info=AcquireImageInfo();
+  image_info->signature=MagickSignature;
+  image_info->debug=MagickTrue;
 
   image=ConstituteImage(
     frame->width,
@@ -33,15 +52,40 @@ Watermark::add(Minicap::Frame* frame) {
     convertFormat(frame->format),
     CharPixel,
     frame->data,
-    &exception);
-  draw_info=AcquireDrawInfo();
+    exception);
+  //image = BlobToImage(image_info, frame->data, frame->size, exception);
+  //draw_info=AcquireDrawInfo();
+  draw_info=CloneDrawInfo(image_info,(DrawInfo *) NULL);
+  CloneString(&draw_info->text, label);
+  FormatLocaleString(geometry, MaxTextExtent, "0x0%+ld%+ld", (long) 40, (long) 40);
+  CloneString(&draw_info->geometry,geometry);
 
-  AnnotateImage(image, draw_info);
+  std::cout << "B"
+              << " " << (image==NULL)
+              << " " << image->blob
+              << " " << image->columns
+              << " " << image->magick
+              << std::endl;
+
+  //RotateImage(image, 180, exception);
+  //AnnotateImage(image, draw_info);
+  //frame->data=image->blob;
+  //frame->data = ImageToBlob(image_info, image, &(frame->size), exception);
   //DestroyExceptionInfo(&exception);
-  DestroyDrawInfo(draw_info);
-  DestroyImage(image);
+  //DrawGradientImage(image, draw_info);
 
-  std::cout << frame->data
+  //DestroyDrawInfo(draw_info);
+  //DestroyImage(image);
+  MagickWand *wand;
+  DrawingWand *drawing_wand;
+
+  wand=NewMagickWandFromImage(image);
+  drawing_wand=NewDrawingWand();
+
+  MagickAnnotateImage(wand, drawing_wand, (double)10, (double)10, (double)10, ConstantString(label));
+
+  std::cout << "C"
+            << " " << frame->data
             << " " << frame->format
             << " " << frame->width
             << " " << frame->height

@@ -10,6 +10,7 @@
 #include <turbojpeg.h>
 #include "Minicap.hpp"
 #include <magick/api.h>
+#include <wand/MagickWand.h>
 
 class Watermark {
 public:

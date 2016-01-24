@@ -399,14 +399,14 @@ main(int argc, char* argv[]) {
       goto disaster;
     }
 
-    if (!encoder.encode(&frame, quality)) {
-      MCERROR("Unable to encode frame");
-      goto disaster;
-    }
-
     // Add watermark to frame
     if (!watermark.add(&frame)) {
       MCERROR("Unable to add watermark to frame");
+      goto disaster;
+    }
+
+    if (!encoder.encode(&frame, quality)) {
+      MCERROR("Unable to encode frame");
       goto disaster;
     }
 
@@ -493,15 +493,15 @@ main(int argc, char* argv[]) {
 
       haveFrame = true;
 
-      // Encode the frame.
-      if (!encoder.encode(&frame, quality)) {
-        MCERROR("Unable to encode frame");
-        goto disaster;
-      }
-
       // Add watermark to frame
       if (!watermark.add(&frame)) {
         MCERROR("Unable to add watermark to frame");
+        goto disaster;
+      }
+
+      // Encode the frame.
+      if (!encoder.encode(&frame, quality)) {
+        MCERROR("Unable to encode frame");
         goto disaster;
       }
 
