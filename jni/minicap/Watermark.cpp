@@ -6,6 +6,15 @@
 #include "Watermark.hpp"
 #include "util/debug.h"
 
+#define ThrowAPIException(wand) \
+{ \
+  description=MagickGetException(wand,&severity); \
+  (void) FormatLocaleFile(stderr,"%s %s %lu %s\n",GetMagickModule(), \
+    description); \
+  description=(char *) MagickRelinquishMemory(description); \
+  exit(-1); \
+}
+
 Watermark::Watermark(unsigned int prePadding, unsigned int postPadding)
   : mTjHandle(tjInitCompress()),
     mSubsampling(TJSAMP_420),
@@ -33,56 +42,52 @@ Watermark::add(Minicap::Frame* frame) {
               << " " << frame->size
               << std::endl;
 
-  ExceptionInfo *exception;
+  // declare variables
+  ExceptionType severity;
+  char *description;
+  MagickWand *magick_wand;
+  unsigned char pixels[frame->size];
+  unsigned int status;
+  const char *format=convertFormat(frame->format);
   Image *image;
-  DrawInfo *draw_info;
-  char label[]="test";
-  ImageInfo *image_info;
-  char geometry[MaxTextExtent];
+  ExceptionInfo *exception;
+  DrawingWand *drawing_wand;
+  PixelWand *fill;
 
-  exception=AcquireExceptionInfo();
-
-  image_info=AcquireImageInfo();
-  image_info->signature=MagickSignature;
-  image_info->debug=MagickTrue;
-
+  // initialize environment
+  MagickWandGenesis();
   image=ConstituteImage(
     frame->width,
     frame->height,
-    convertFormat(frame->format),
+    format,
     CharPixel,
     frame->data,
     exception);
-  //image = BlobToImage(image_info, frame->data, frame->size, exception);
-  //draw_info=AcquireDrawInfo();
-  draw_info=CloneDrawInfo(image_info,(DrawInfo *) NULL);
-  CloneString(&draw_info->text, label);
-  FormatLocaleString(geometry, MaxTextExtent, "0x0%+ld%+ld", (long) 40, (long) 40);
-  CloneString(&draw_info->geometry,geometry);
-
-  std::cout << "B"
-              << " " << (image==NULL)
-              << " " << image->blob
-              << " " << image->columns
-              << " " << image->magick
-              << std::endl;
-
-  //RotateImage(image, 180, exception);
-  //AnnotateImage(image, draw_info);
-  //frame->data=image->blob;
-  //frame->data = ImageToBlob(image_info, image, &(frame->size), exception);
-  //DestroyExceptionInfo(&exception);
-  //DrawGradientImage(image, draw_info);
-
-  //DestroyDrawInfo(draw_info);
-  //DestroyImage(image);
-  MagickWand *wand;
-  DrawingWand *drawing_wand;
-
-  wand=NewMagickWandFromImage(image);
+  magick_wand=NewMagickWandFromImage(image);
   drawing_wand=NewDrawingWand();
+  fill=NewPixelWand();
 
-  MagickAnnotateImage(wand, drawing_wand, (double)10, (double)10, (double)10, ConstantString(label));
+  (void) DrawRotate(drawing_wand,45);
+  (void) DrawSetFontSize(drawing_wand,18);
+  (void) PixelSetColor(fill,"green");
+  (void) DrawSetFillColor(drawing_wand,fill);
+  (void) DrawAnnotation(drawing_wand,15,5,(const unsigned char *) "Magick");
+  //status=MagickDrawImage(magick_wand,drawing_wand);
+  //if (status == MagickFalse)
+  //  ThrowAPIException(magick_wand);
+  //status=MagickAnnotateImage(magick_wand,drawing_wand,70,5,90,"Image");
+  //if (status == MagickFalse)
+  //  ThrowAPIException(magick_wand);
+
+  status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
+  if (status == MagickFalse)
+    ThrowAPIException(magick_wand);
+  frame->data=pixels;
+
+  image=DestroyImage(image);
+  //fill=DestroyPixelWand(fill);
+  drawing_wand=DestroyDrawingWand(drawing_wand);
+  magick_wand=DestroyMagickWand(magick_wand);
 
   std::cout << "C"
             << " " << frame->data
