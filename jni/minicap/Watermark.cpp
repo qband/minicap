@@ -33,14 +33,14 @@ Watermark::~Watermark() {
 bool
 Watermark::add(Minicap::Frame* frame) {
   std::cout << "A"
-              << " " << frame->data
-              << " " << frame->format
-              << " " << frame->width
-              << " " << frame->height
-              << " " << frame->stride
-              << " " << frame->bpp
-              << " " << frame->size
-              << std::endl;
+            << " " << frame->data
+            << " " << frame->format
+            << " " << frame->width
+            << " " << frame->height
+            << " " << frame->stride
+            << " " << frame->bpp
+            << " " << frame->size
+            << std::endl;
 
   // declare variables
   ExceptionType severity;
@@ -79,15 +79,48 @@ Watermark::add(Minicap::Frame* frame) {
   //if (status == MagickFalse)
   //  ThrowAPIException(magick_wand);
 
+  std::cout << "B"
+            << "\nmagick_wand->id " << magick_wand->id
+            << "\nmagick_wand->name " << magick_wand->name
+            << "\nmagick_wand->exception " << magick_wand->exception
+            << "\nmagick_wand->image_info " << magick_wand->image_info
+            << "\nmagick_wand->quantize_info " << magick_wand->quantize_info
+            << "\nmagick_wand->images " << magick_wand->images
+            << "\nmagick_wand->active " << magick_wand->active
+            << "\nmagick_wand->pend " << magick_wand->pend
+            << "\nmagick_wand->debug " << magick_wand->debug
+            << "\nmagick_wand->signature " << magick_wand->signature
+            << "\ndrawing_wand->id " << drawing_wand->id
+            << "\ndrawing_wand->name " << drawing_wand->name
+            << "\ndrawing_wand->image " << drawing_wand->image
+            << "\ndrawing_wand->exception " << drawing_wand->exception
+            << "\ndrawing_wand->mvg " << drawing_wand->mvg
+            << "\ndrawing_wand->mvg_alloc " << drawing_wand->mvg_alloc
+            << "\ndrawing_wand->mvg_length " << drawing_wand->mvg_length
+            << "\ndrawing_wand->mvg_width " << drawing_wand->mvg_width
+//            << "\ndrawing_wand->pattern_id " << drawing_wand->pattern_id
+//            << "\ndrawing_wand->pattern_bounds " << drawing_wand->pattern_bounds
+//            << "\ndrawing_wand->pattern_offset " << drawing_wand->pattern_offset
+            << "\ndrawing_wand->index " << drawing_wand->index
+            << "\ndrawing_wand->graphic_context " << drawing_wand->graphic_context
+            << "\ndrawing_wand->filter_off " << drawing_wand->filter_off
+            << "\ndrawing_wand->indent_depth " << drawing_wand->indent_depth
+            << "\ndrawing_wand->path_operation " << drawing_wand->path_operation
+            << "\ndrawing_wand->path_mode " << drawing_wand->path_mode
+            << "\ndrawing_wand->destroy " << drawing_wand->destroy
+            << "\ndrawing_wand->debug " << drawing_wand->debug
+            << "\ndrawing_wand->signature " << drawing_wand->signature
+            << std::endl;
+
   status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   frame->data=pixels;
 
-  image=DestroyImage(image);
-  //fill=DestroyPixelWand(fill);
-  drawing_wand=DestroyDrawingWand(drawing_wand);
-  magick_wand=DestroyMagickWand(magick_wand);
+  if(image) image=DestroyImage(image);
+  if(fill) fill=DestroyPixelWand(fill);
+  if(drawing_wand) drawing_wand=DestroyDrawingWand(drawing_wand);
+  if(magick_wand) magick_wand=DestroyMagickWand(magick_wand);
 
   std::cout << "C"
             << " " << frame->data

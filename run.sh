@@ -47,7 +47,8 @@ else
 fi
 
 # Run!
-adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
+#adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
+adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args -P 1080x1920@540x960/0
 
 # Clean up
 adb shell rm -r $dir
