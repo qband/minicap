@@ -48,7 +48,7 @@ fi
 
 # Run!
 #adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
-adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args -P 1080x1920@540x960/0
+adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_DEBUG=Exception; $dir/$bin $args -P 1080x1920@540x960/0"
 
 # Clean up
 adb shell rm -r $dir

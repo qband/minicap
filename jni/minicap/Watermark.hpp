@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <turbojpeg.h>
+#include <stdexcept>
 #include "Minicap.hpp"
 #include <magick/api.h>
 #include <wand/MagickWand.h>
