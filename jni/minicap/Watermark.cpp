@@ -49,16 +49,34 @@ Watermark::add(Minicap::Frame* frame) {
     ThrowAPIException(magick_wand);
   drawing_wand=NewDrawingWand();
   fill=NewPixelWand();
+  // set the transparency
+  MagickSetImageAlphaChannel(magick_wand,ActivateAlphaChannel);
+  PixelSetColor(fill,"rgba(0,0,0,0)");
+  MagickTransparentPaintImage(magick_wand,fill,1,10,MagickFalse);
 
   // set font style
-  //MagickSetFont(magick_wand, "/system/fonts/Roboto-Regular.ttf");
-  DrawSetFont(drawing_wand,"/system/fonts/Roboto-Regular.ttf");
-  DrawSetFontSize(drawing_wand,18);
-  PixelSetColor(fill,"white");
+  DrawSetFont(drawing_wand, "/system/fonts/Roboto-Regular.ttf");
+  DrawSetFontSize(drawing_wand,24);
+  //PixelSetColor(fill,"rgba(192,192,192,0.01)");
+  //DrawSetStrokeColor(drawing_wand,fill);
+  PixelSetColor(fill,"rgba(80,80,80,0.1)");
   DrawSetFillColor(drawing_wand,fill);
+  DrawSetGravity(drawing_wand,CenterGravity);
 
-  // apply the watermark into image
-  status=MagickAnnotateImage(magick_wand,drawing_wand,20,5,90,"Image");
+  // draw text
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,"mark mark mark");
+  if (status == MagickFalse)
+  ThrowAPIException(magick_wand);
+
+  // set font style
+  //PixelSetColor(fill,"rgba(192,192,192,1)");
+  //DrawSetStrokeColor(drawing_wand,fill);
+  PixelSetColor(fill,"rgba(80,80,80,1)");
+  DrawSetFillColor(drawing_wand,fill);
+  DrawSetGravity(drawing_wand,CenterGravity);
+
+  // draw text
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,"mark mark mark");
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
 
