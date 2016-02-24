@@ -113,6 +113,9 @@ public:
   bool
   add(Minicap::Frame* frame);
 
+  bool
+  addStegano(Minicap::Frame* frame);
+
 private:
   tjhandle mTjHandle;
   int mSubsampling;

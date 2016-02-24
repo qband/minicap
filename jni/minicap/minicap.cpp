@@ -405,6 +405,13 @@ main(int argc, char* argv[]) {
       goto disaster;
     }
 
+    // Add invisible watermark(steganograph) to frame
+    if (!watermark.addStegano(&frame)) {
+      MCERROR("Unable to add invisible watermark to frame");
+      goto disaster;
+    }
+
+    // Encode the frame.
     if (!encoder.encode(&frame, quality)) {
       MCERROR("Unable to encode frame");
       goto disaster;
@@ -496,6 +503,12 @@ main(int argc, char* argv[]) {
       // Add watermark to frame
       if (!watermark.add(&frame)) {
         MCERROR("Unable to add watermark to frame");
+        goto disaster;
+      }
+
+      // Add invisible watermark(steganograph) to frame
+      if (!watermark.addStegano(&frame)) {
+        MCERROR("Unable to add invisible watermark to frame");
         goto disaster;
       }
 

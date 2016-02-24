@@ -110,3 +110,10 @@ Watermark::convertFormat(Minicap::Format format) {
     throw std::runtime_error("Unsupported pixel format");
   }
 }
+
+bool
+Watermark::addStegano(Minicap::Frame* frame) {
+
+
+  return true;
+}
