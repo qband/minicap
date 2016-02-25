@@ -86,7 +86,7 @@ Watermark::add(Minicap::Frame* frame) {
     ThrowAPIException(magick_wand);
   frame->data=pixels;
 
-  // release mem resource
+  // destroy mem resource
   if(fill) fill=DestroyPixelWand(fill);
   if(drawing_wand) drawing_wand=DestroyDrawingWand(drawing_wand);
   if(magick_wand) magick_wand=DestroyMagickWand(magick_wand);
@@ -113,7 +113,36 @@ Watermark::convertFormat(Minicap::Format format) {
 
 bool
 Watermark::addStegano(Minicap::Frame* frame) {
+  // declare variables
+  char *description;
+  ExceptionType severity;
+  ExceptionInfo *exception;
+  unsigned int status;
+  MagickWand *magick_wand;
+  MagickWand *watermark_wand;
+  unsigned char pixels[frame->size];
+  DrawingWand *drawing_wand;
+  const char *format=convertFormat(frame->format);
+  PixelWand *fill;
 
+  // initialize environment
+  MagickWandGenesis();
+  magick_wand=NewMagickWand();
+  status=MagickConstituteImage(magick_wand,frame->width,frame->height,format,CharPixel, frame->data);
+  if (status == MagickFalse)
+    ThrowAPIException(magick_wand);
+  drawing_wand=NewDrawingWand();
+  watermark_wand=NewMagickWand();
+
+
+  // draw hiden watermark on image
+  //magick_wand=MagickSteganoImage(magick_wand,watermark_wand,0);
+
+  // export result
+  status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
+  if (status == MagickFalse)
+    ThrowAPIException(magick_wand);
+  frame->data=pixels;
 
   return true;
 }
