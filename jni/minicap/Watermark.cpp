@@ -134,13 +134,13 @@ Watermark::addStegano(Minicap::Frame* frame) {
   drawing_wand=NewDrawingWand();
   watermark_wand=NewMagickWand();
   fill=NewPixelWand();
-  status=MagickNewImage(watermark_wand,(frame->width)/1,(frame->height)/1,fill);
+  status=MagickNewImage(watermark_wand,(frame->width)/8,(frame->height)/8,fill);
   if (status == MagickFalse)
     ThrowAPIException(watermark_wand);
 
   // set font style
   DrawSetFont(drawing_wand, "/system/fonts/Roboto-Regular.ttf");
-  DrawSetFontSize(drawing_wand,24);
+  DrawSetFontSize(drawing_wand,12);
   //PixelSetColor(fill,"rgba(192,192,192,0.01)");
   //DrawSetStrokeColor(drawing_wand,fill);
   PixelSetColor(fill,"rgba(255,255,255)");
@@ -148,7 +148,7 @@ Watermark::addStegano(Minicap::Frame* frame) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text on watermark_wand
-  status=MagickAnnotateImage(watermark_wand,drawing_wand,0,0,0,"mark mark mark");
+  status=MagickAnnotateImage(watermark_wand,drawing_wand,0,0,0,"mark\nmark\nmark");
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
 
@@ -161,7 +161,7 @@ Watermark::addStegano(Minicap::Frame* frame) {
     ThrowAPIException(magick_wand);
   frame->data=pixels;
 
-  //MagickWriteImage(magick_wand,"/data/local/tmp/minicap-devel/test.png");
+//  MagickWriteImage(magick_wand,"/data/local/tmp/minicap-devel/test.png");
 
 //  unsigned char* offset;
 
