@@ -133,16 +133,49 @@ Watermark::addStegano(Minicap::Frame* frame) {
     ThrowAPIException(magick_wand);
   drawing_wand=NewDrawingWand();
   watermark_wand=NewMagickWand();
+  fill=NewPixelWand();
+  status=MagickNewImage(watermark_wand,(frame->width)/8,(frame->height)/8,fill);
+  if (status == MagickFalse)
+    ThrowAPIException(watermark_wand);
 
+  // set font style
+  DrawSetFont(drawing_wand, "/system/fonts/Roboto-Regular.ttf");
+  DrawSetFontSize(drawing_wand,24);
+  //PixelSetColor(fill,"rgba(192,192,192,0.01)");
+  //DrawSetStrokeColor(drawing_wand,fill);
+  PixelSetColor(fill,"rgba(255,255,255)");
+  DrawSetFillColor(drawing_wand,fill);
+  DrawSetGravity(drawing_wand,CenterGravity);
 
-  // draw hiden watermark on image
-  //magick_wand=MagickSteganoImage(magick_wand,watermark_wand,0);
+  // draw text on watermark_wand
+  status=MagickAnnotateImage(watermark_wand,drawing_wand,0,0,0,"mark mark mark");
+  if (status == MagickFalse)
+    ThrowAPIException(magick_wand);
+
+  // draw hiden watermark (watermark_wand) on magick_wand
+  magick_wand=MagickSteganoImage(magick_wand,watermark_wand,0);
 
   // export result
   status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   frame->data=pixels;
+
+//  unsigned char* offset;
+
+//  std::cout << "A" << std::endl;
+//  MagickSetImageFormat(magick_wand,"jpg");
+//  std::cout << "B" << std::endl;
+//  offset=MagickGetImageBlob(magick_wand,(size_t*)&mEncodedSize);
+//  std::cout << "C" << " " << offset << " " << mEncodedSize << std::endl;
+//  mEncodedData=offset-mPrePadding;
+
+  // destroy the resource
+  if(fill)fill=DestroyPixelWand(fill);
+  if(drawing_wand)drawing_wand=DestroyDrawingWand(drawing_wand);
+  if(watermark_wand)watermark_wand = DestroyMagickWand(watermark_wand);
+  if(magick_wand)magick_wand = DestroyMagickWand(magick_wand);
+  MagickWandTerminus();
 
   return true;
 }
