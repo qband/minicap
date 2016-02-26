@@ -134,7 +134,7 @@ Watermark::addStegano(Minicap::Frame* frame) {
   drawing_wand=NewDrawingWand();
   watermark_wand=NewMagickWand();
   fill=NewPixelWand();
-  status=MagickNewImage(watermark_wand,(frame->width)/8,(frame->height)/8,fill);
+  status=MagickNewImage(watermark_wand,(frame->width)/1,(frame->height)/1,fill);
   if (status == MagickFalse)
     ThrowAPIException(watermark_wand);
 
@@ -153,13 +153,15 @@ Watermark::addStegano(Minicap::Frame* frame) {
     ThrowAPIException(magick_wand);
 
   // draw hiden watermark (watermark_wand) on magick_wand
-  magick_wand=MagickSteganoImage(magick_wand,watermark_wand,0);
+  magick_wand=MagickSteganoImage(magick_wand,watermark_wand,+15);
 
   // export result
   status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   frame->data=pixels;
+
+  //MagickWriteImage(magick_wand,"/data/local/tmp/minicap-devel/test.png");
 
 //  unsigned char* offset;
 
