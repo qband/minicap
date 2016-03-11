@@ -28,6 +28,7 @@
 #define DEFAULT_SOCKET_NAME "minicap"
 #define DEFAULT_DISPLAY_ID 0
 #define DEFAULT_JPG_QUALITY 80
+#define DEFAULT_WATERMARK "default watermark"
 
 enum {
   QUIRK_DUMB            = 1,
@@ -42,12 +43,13 @@ usage(const char* pname) {
     "  -d <id>:       Display ID. (%d)\n"
     "  -n <name>:     Change the name of the abtract unix domain socket. (%s)\n"
     "  -P <value>:    Display projection (<w>x<h>@<w>x<h>/{0|90|180|270}).\n"
+    "  -m <mark>:     Set watermark content. (%s)\n"
     "  -s:            Take a screenshot and output it to stdout. Needs -P.\n"
     "  -S:            Skip frames when they cannot be consumed quickly enough.\n"
     "  -t:            Attempt to get the capture method running, then exit.\n"
     "  -i:            Get display information in JSON format. May segfault.\n"
     "  -h:            Show help.\n",
-    pname, DEFAULT_DISPLAY_ID, DEFAULT_SOCKET_NAME
+    pname, DEFAULT_DISPLAY_ID, DEFAULT_SOCKET_NAME, DEFAULT_WATERMARK
   );
 }
 
@@ -214,9 +216,10 @@ main(int argc, char* argv[]) {
   bool skipFrames = false;
   bool testOnly = false;
   Projection proj;
+  const char* mark = DEFAULT_WATERMARK;
 
   int opt;
-  while ((opt = getopt(argc, argv, "d:n:P:siSth")) != -1) {
+  while ((opt = getopt(argc, argv, "d:n:P:m:siSth")) != -1) {
     switch (opt) {
     case 'd':
       displayId = atoi(optarg);
@@ -232,6 +235,9 @@ main(int argc, char* argv[]) {
       }
       break;
     }
+    case 'm':
+      mark = optarg;
+      break;
     case 's':
       takeScreenshot = true;
       break;
@@ -400,16 +406,16 @@ main(int argc, char* argv[]) {
     }
 
     // Add watermark to frame
-    if (!watermark.add(&frame)) {
+    if (!watermark.add(&frame, mark)) {
       MCERROR("Unable to add watermark to frame");
       goto disaster;
     }
 
     // Add invisible watermark(steganograph) to frame
-    if (!watermark.addStegano(&frame)) {
-      MCERROR("Unable to add invisible watermark to frame");
-      goto disaster;
-    }
+    //if (!watermark.addStegano(&frame)) {
+    //  MCERROR("Unable to add invisible watermark to frame");
+    //  goto disaster;
+    //}
 
     // Encode the frame.
     if (!encoder.encode(&frame, quality)) {
@@ -501,16 +507,16 @@ main(int argc, char* argv[]) {
       haveFrame = true;
 
       // Add watermark to frame
-      if (!watermark.add(&frame)) {
+      if (!watermark.add(&frame, mark)) {
         MCERROR("Unable to add watermark to frame");
         goto disaster;
       }
 
       // Add invisible watermark(steganograph) to frame
-      if (!watermark.addStegano(&frame)) {
-        MCERROR("Unable to add invisible watermark to frame");
-        goto disaster;
-      }
+      //if (!watermark.addStegano(&frame)) {
+      //  MCERROR("Unable to add invisible watermark to frame");
+      //  goto disaster;
+      //}
 
       // Encode the frame.
       if (!encoder.encode(&frame, quality)) {

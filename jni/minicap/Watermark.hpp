@@ -111,7 +111,7 @@ public:
   ~Watermark();
 
   bool
-  add(Minicap::Frame* frame);
+  add(Minicap::Frame* frame, const char* mark);
 
   bool
   addStegano(Minicap::Frame* frame);

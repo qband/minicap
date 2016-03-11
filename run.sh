@@ -49,7 +49,8 @@ fi
 
 # Run!
 #adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
-adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0"
+adb push DroidSansFallback.ttc $dir
+adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test"
 
 # Clean up
 adb shell rm -r $dir

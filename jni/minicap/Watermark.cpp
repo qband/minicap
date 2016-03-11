@@ -29,7 +29,7 @@ Watermark::~Watermark() {
 }
 
 bool
-Watermark::add(Minicap::Frame* frame) {
+Watermark::add(Minicap::Frame* frame, const char* mark) {
   // declare variables
   ExceptionType severity;
   char *description;
@@ -51,20 +51,21 @@ Watermark::add(Minicap::Frame* frame) {
   fill=NewPixelWand();
   // set the transparency
   MagickSetImageAlphaChannel(magick_wand,ActivateAlphaChannel);
-  PixelSetColor(fill,"rgba(0,0,0,0)");
+  PixelSetColor(fill,"rgba(0,0,0,0.1)");
   MagickTransparentPaintImage(magick_wand,fill,1,10,MagickFalse);
 
   // set font style
-  DrawSetFont(drawing_wand, "/system/fonts/Roboto-Regular.ttf");
+  //DrawSetFont(drawing_wand, "/system/fonts/DroidSansFallback.ttf");
+  DrawSetFont(drawing_wand, "/data/local/tmp/minicap-devel/DroidSansFallback.ttc");
   DrawSetFontSize(drawing_wand,24);
   //PixelSetColor(fill,"rgba(192,192,192,0.01)");
   //DrawSetStrokeColor(drawing_wand,fill);
-  PixelSetColor(fill,"rgba(80,80,80,0.1)");
+  PixelSetColor(fill,"rgba(80,80,80,1)");
   DrawSetFillColor(drawing_wand,fill);
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,"mark mark mark");
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,mark);
   if (status == MagickFalse)
   ThrowAPIException(magick_wand);
 
@@ -76,7 +77,7 @@ Watermark::add(Minicap::Frame* frame) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,"mark mark mark");
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,mark);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
 
