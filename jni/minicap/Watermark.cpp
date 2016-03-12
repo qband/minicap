@@ -60,7 +60,7 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetFontSize(drawing_wand,24);
   //PixelSetColor(fill,"rgba(192,192,192,0.01)");
   //DrawSetStrokeColor(drawing_wand,fill);
-  PixelSetColor(fill,"rgba(80,80,80,1)");
+  PixelSetColor(fill,"rgba(80,80,80,0.2)");
   DrawSetFillColor(drawing_wand,fill);
   DrawSetGravity(drawing_wand,CenterGravity);
 
