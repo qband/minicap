@@ -39,6 +39,7 @@ adb shell "mkdir $dir 2>/dev/null"
 # Upload the binary
 adb push libs/$abi/$bin $dir
 adb push policy.xml $dir
+adb push DroidSansFallback.ttc $dir
 
 # Upload the shared library
 if [ -e jni/minicap-shared/aosp/libs/android-$rel/$abi/minicap.so ]; then
@@ -48,9 +49,10 @@ else
 fi
 
 # Run!
+adb shell pkill minicap
 #adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
-adb push DroidSansFallback.ttc $dir
-adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test"
+#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test"
+adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@400x400/0 -m 汉字:,test"
 
 # Clean up
 adb shell rm -r $dir
