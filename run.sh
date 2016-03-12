@@ -48,11 +48,22 @@ else
   adb push jni/minicap-shared/aosp/libs/android-$sdk/$abi/minicap.so $dir
 fi
 
-# Run!
 adb shell pkill minicap
-#adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test"
-adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@400x400/0 -m 汉字:,test"
 
-# Clean up
-adb shell rm -r $dir
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+function ctrl_c() {
+  # Clean up
+  adb shell rm -r $dir
+}
+
+# Run!
+#adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
+
+# normal
+#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test"
+#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@400x400/0 -m 汉字:,test"
+
+# wrong
+#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@408x525/0 -m 汉字:,test"
+adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@461x461/0 -m 汉字:,test"

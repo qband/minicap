@@ -118,14 +118,9 @@ module.exports = syrup.serial()
           bin: resources.bin.dest
         , lib: resources.lib.dest
         , run: function(cmd) {
-            return adb.shell(options.serial, util.format(
-              'LD_LIBRARY_PATH=%s MAGICK_CONFIGURE_PATH=%s exec %s %s %s'
-            , path.dirname(resources.lib.dest)
-            , path.dirname(resources.lib.dest)
-            , resources.bin.dest
-            , cmd
-            , '-m 水印：tesT!'
-            ))
+            var cmds = util.format( 'LD_LIBRARY_PATH=%s MAGICK_CONFIGURE_PATH=%s exec %s %s %s' , path.dirname(resources.lib.dest) , path.dirname(resources.lib.dest) , resources.bin.dest , cmd , '-m 水印：tesT!' );
+            console.log('=======================', cmds);
+            return adb.shell(options.serial, cmds)
           }
         }
       })

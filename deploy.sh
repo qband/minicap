@@ -8,10 +8,17 @@ BACKUP_DIR=tmp/backup/`date +%Y%m%d-%H%M%S`
 ARTIFACT_DIR=tmp/vendor/minicap
 
 # backup
-mkdir -p $BACKUP_DIR
-cp -r $MINICAP_VENDOR_DIR $BACKUP_DIR
-cp $MINICAP_JS_PATH $BACKUP_DIR
+backup () {
+  mkdir -p $BACKUP_DIR
+  cp -r $MINICAP_VENDOR_DIR $BACKUP_DIR
+  cp $MINICAP_JS_PATH $BACKUP_DIR
+}
 
 # deploy
-sudo cp -r $ARTIFACT_DIR/* $MINICAP_VENDOR_DIR
-sudo mv $ARTIFACT_DIR/minicap.js $MINICAP_JS_PATH
+deploy() {
+  sudo cp -r $ARTIFACT_DIR/* $MINICAP_VENDOR_DIR
+  sudo mv $ARTIFACT_DIR/minicap.js $MINICAP_JS_PATH
+}
+
+#backup
+deploy
