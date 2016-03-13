@@ -54,6 +54,9 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   PixelSetColor(fill,"rgba(0,0,0,0.1)");
   MagickTransparentPaintImage(magick_wand,fill,1,10,MagickFalse);
 
+  // Turn antialias on - not sure this makes a difference
+  DrawSetTextAntialias(drawing_wand,MagickTrue);
+
   // set font style
   //DrawSetFont(drawing_wand, "/system/fonts/DroidSansFallback.ttf");
   DrawSetFont(drawing_wand, "/data/local/tmp/minicap-devel/DroidSansFallback.ttc");
@@ -65,7 +68,7 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,0,mark);
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,mark);
   if (status == MagickFalse)
   ThrowAPIException(magick_wand);
 
@@ -77,7 +80,7 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,0,mark);
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,mark);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
 
