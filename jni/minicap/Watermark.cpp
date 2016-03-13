@@ -44,7 +44,7 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   // initialize environment
   MagickWandGenesis();
   magick_wand=NewMagickWand();
-  status=MagickConstituteImage(magick_wand,frame->width,frame->height,format,CharPixel, frame->data);
+  status=MagickConstituteImage(magick_wand,frame->stride,frame->height,format,CharPixel, frame->data);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   drawing_wand=NewDrawingWand();
@@ -65,7 +65,7 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,mark);
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,0,mark);
   if (status == MagickFalse)
   ThrowAPIException(magick_wand);
 
@@ -77,12 +77,12 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetGravity(drawing_wand,CenterGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,mark);
+  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,0,mark);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
 
   // export result
-  status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
+  status=MagickExportImagePixels(magick_wand,0,0,frame->stride,frame->height,format,CharPixel,pixels);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   frame->data=pixels;
@@ -92,6 +92,8 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   if(drawing_wand) drawing_wand=DestroyDrawingWand(drawing_wand);
   if(magick_wand) magick_wand=DestroyMagickWand(magick_wand);
   MagickWandTerminus();
+
+  //std::cout << frame->data << " " << frame->format << " " << frame->width << " " << frame->height << " " << frame->stride << " " << frame->bpp << " " << frame->size << std::endl;
 
   return true;
 }
@@ -129,13 +131,13 @@ Watermark::addStegano(Minicap::Frame* frame) {
   // initialize environment
   MagickWandGenesis();
   magick_wand=NewMagickWand();
-  status=MagickConstituteImage(magick_wand,frame->width,frame->height,format,CharPixel, frame->data);
+  status=MagickConstituteImage(magick_wand,frame->stride,frame->height,format,CharPixel, frame->data);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   drawing_wand=NewDrawingWand();
   watermark_wand=NewMagickWand();
   fill=NewPixelWand();
-  status=MagickNewImage(watermark_wand,(frame->width)/8,(frame->height)/8,fill);
+  status=MagickNewImage(watermark_wand,(frame->stride)/8,(frame->height)/8,fill);
   if (status == MagickFalse)
     ThrowAPIException(watermark_wand);
 
@@ -157,7 +159,7 @@ Watermark::addStegano(Minicap::Frame* frame) {
   magick_wand=MagickSteganoImage(magick_wand,watermark_wand,+15);
 
   // export result
-  status=MagickExportImagePixels(magick_wand,0,0,frame->width,frame->height,format,CharPixel,pixels);
+  status=MagickExportImagePixels(magick_wand,0,0,frame->stride,frame->height,format,CharPixel,pixels);
   if (status == MagickFalse)
     ThrowAPIException(magick_wand);
   frame->data=pixels;
