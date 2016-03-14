@@ -59,21 +59,8 @@ function ctrl_c() {
 
 # Run!
 #adb shell LD_LIBRARY_PATH=$dir $dir/$bin $args "$@"
-
-# normal
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@384x640/0 -m 汉字:,test" #384 640
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@400x400/0 -m 汉字:,test" #240 400
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@460x460/0 -m 汉字:,test" #277 461
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@360x640/0 -m 汉字:,test" #360 640
-
-# wrong
-adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@277x461/0 -m 汉字:,test" #277 461
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@461x461/0 -m 汉字:,test" #277 461
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@408x525/0 -m 汉字:,test" #295 525
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@461x461/0 -m 汉字:,test" #259 461
-#adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 720x1280@360x639/0 -m 汉字:,test" #259 461
+adb shell "export LD_LIBRARY_PATH=$dir; export MAGICK_CONFIGURE_PATH=$dir; export MAGICK_FONT_PATH=/system/fonts; export MAGICK_DEBUG=Exception; $dir/$bin $args -S -P 768x1280@277x461/0 -m \"AAAAAAA        BBBBBBBB        CCCCCCCC        DDDDDDDD        EEEEEEEE\"" #277 461
 
 # NAME  data format width height stride bpp size
 # AVD   0xbfd12c74 6 295 525 295 4 619500 FORMAT_RGBA_8888
 # PHONE 0xbee28aa0 10 295 525 296 4 621600 FORMAT_BGRA_8888
-

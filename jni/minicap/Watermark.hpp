@@ -124,6 +124,7 @@ private:
   unsigned int mMaxWidth;
   unsigned int mMaxHeight;
   unsigned char* mEncodedData;
+  unsigned char* pixels;
   unsigned long mEncodedSize;
 
   const char*

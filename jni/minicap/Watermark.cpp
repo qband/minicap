@@ -17,6 +17,7 @@ Watermark::Watermark(unsigned int prePadding, unsigned int postPadding)
   : mTjHandle(tjInitCompress()),
     mSubsampling(TJSAMP_420),
     mEncodedData(NULL),
+    pixels(NULL),
     mPrePadding(prePadding),
     mPostPadding(postPadding),
     mMaxWidth(0),
@@ -26,15 +27,21 @@ Watermark::Watermark(unsigned int prePadding, unsigned int postPadding)
 
 Watermark::~Watermark() {
   tjFree(mEncodedData);
+  free(pixels);
 }
 
 bool
 Watermark::add(Minicap::Frame* frame, const char* mark) {
+  //std::cout << frame->data << " " << frame->format << " " << frame->width << " " << frame->height << " " << frame->stride << " " << frame->bpp << " " << frame->size << std::endl;
+
   // declare variables
   ExceptionType severity;
   char *description;
   MagickWand *magick_wand;
-  unsigned char pixels[frame->size];
+  if( pixels == NULL ) {
+    MCINFO("Allocating %ld bytes for Watermark maker", frame->size);
+    pixels = (unsigned char *)malloc(frame->size);
+  }
   unsigned int status;
   const char *format=convertFormat(frame->format);
   ExceptionInfo *exception;
@@ -58,31 +65,26 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   DrawSetTextAntialias(drawing_wand,MagickTrue);
 
   // set font style
+  int byte_width = frame->width/50;
+  int font_size = byte_width * 3;
   //DrawSetFont(drawing_wand, "/system/fonts/DroidSansFallback.ttf");
   DrawSetFont(drawing_wand, "/data/local/tmp/minicap-devel/DroidSansFallback.ttc");
-  DrawSetFontSize(drawing_wand,24);
-  //PixelSetColor(fill,"rgba(192,192,192,0.01)");
-  //DrawSetStrokeColor(drawing_wand,fill);
-  PixelSetColor(fill,"rgba(80,80,80,0.2)");
-  DrawSetFillColor(drawing_wand,fill);
-  DrawSetGravity(drawing_wand,CenterGravity);
-
-  // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,-40,45,mark);
-  if (status == MagickFalse)
-  ThrowAPIException(magick_wand);
-
-  // set font style
-  //PixelSetColor(fill,"rgba(192,192,192,1)");
-  //DrawSetStrokeColor(drawing_wand,fill);
+  DrawSetFontSize(drawing_wand, font_size);
   PixelSetColor(fill,"rgba(80,80,80,1)");
   DrawSetFillColor(drawing_wand,fill);
-  DrawSetGravity(drawing_wand,CenterGravity);
+  DrawSetGravity(drawing_wand,NorthWestGravity);
 
   // draw text
-  status=MagickAnnotateImage(magick_wand,drawing_wand,0,40,45,mark);
-  if (status == MagickFalse)
-    ThrowAPIException(magick_wand);
+  double step = (frame->height/4.0)*0.8660254037844386;//python -c "import math;print(math.sin(math.pi/3));"
+  double offset_x = frame->width / 3;
+  double offset_y = 0;
+  double move_x;
+  double move_y;
+  for(int i = 0; i < 5; i++) {
+    move_x = -(2*i)*(8*byte_width)*0.8660254037844386;
+    move_y = -(2*i)*(8*byte_width)*0.5;
+    MagickAnnotateImage(magick_wand, drawing_wand, offset_x + move_x, offset_y + i * step + move_y, 30 ,mark);
+  }
 
   // export result
   status=MagickExportImagePixels(magick_wand,0,0,frame->stride,frame->height,format,CharPixel,pixels);
@@ -95,8 +97,6 @@ Watermark::add(Minicap::Frame* frame, const char* mark) {
   if(drawing_wand) drawing_wand=DestroyDrawingWand(drawing_wand);
   if(magick_wand) magick_wand=DestroyMagickWand(magick_wand);
   MagickWandTerminus();
-
-  //std::cout << frame->data << " " << frame->format << " " << frame->width << " " << frame->height << " " << frame->stride << " " << frame->bpp << " " << frame->size << std::endl;
 
   return true;
 }
